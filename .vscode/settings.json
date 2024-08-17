@@ -1,0 +1,38 @@
+{
+    "python.autoComplete.extraPaths": [
+        "/home/battery/multi_iiwa_ws/build/visualizer",
+        "/home/battery/multi_iiwa_ws/install/visualizer/lib/python3.10/site-packages",
+        "/home/battery/multi_iiwa_ws/build/remappings",
+        "/home/battery/multi_iiwa_ws/install/remappings/lib/python3.10/site-packages",
+        "/home/battery/multi_iiwa_ws/install/nvblox_msgs/local/lib/python3.10/dist-packages",
+        "/home/battery/multi_iiwa_ws/build/moveit_motion",
+        "/home/battery/multi_iiwa_ws/install/moveit_motion/lib/python3.10/site-packages",
+        "/home/battery/multi_iiwa_ws/install/mocap_optitrack_interfaces/local/lib/python3.10/dist-packages",
+        "/home/battery/multi_iiwa_ws/build/lbr_demos_py",
+        "/home/battery/multi_iiwa_ws/install/lbr_demos_py/lib/python3.10/site-packages",
+        "/home/battery/multi_iiwa_ws/install/lbr_bringup/local/lib/python3.10/dist-packages",
+        "/home/battery/multi_iiwa_ws/build/lbr_demos_advanced_py",
+        "/home/battery/multi_iiwa_ws/install/lbr_demos_advanced_py/lib/python3.10/site-packages",
+        "/home/battery/multi_iiwa_ws/install/lbr_fri_idl/local/lib/python3.10/dist-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ],
+    "python.analysis.extraPaths": [
+        "/home/battery/multi_iiwa_ws/build/visualizer",
+        "/home/battery/multi_iiwa_ws/install/visualizer/lib/python3.10/site-packages",
+        "/home/battery/multi_iiwa_ws/build/remappings",
+        "/home/battery/multi_iiwa_ws/install/remappings/lib/python3.10/site-packages",
+        "/home/battery/multi_iiwa_ws/install/nvblox_msgs/local/lib/python3.10/dist-packages",
+        "/home/battery/multi_iiwa_ws/build/moveit_motion",
+        "/home/battery/multi_iiwa_ws/install/moveit_motion/lib/python3.10/site-packages",
+        "/home/battery/multi_iiwa_ws/install/mocap_optitrack_interfaces/local/lib/python3.10/dist-packages",
+        "/home/battery/multi_iiwa_ws/build/lbr_demos_py",
+        "/home/battery/multi_iiwa_ws/install/lbr_demos_py/lib/python3.10/site-packages",
+        "/home/battery/multi_iiwa_ws/install/lbr_bringup/local/lib/python3.10/dist-packages",
+        "/home/battery/multi_iiwa_ws/build/lbr_demos_advanced_py",
+        "/home/battery/multi_iiwa_ws/install/lbr_demos_advanced_py/lib/python3.10/site-packages",
+        "/home/battery/multi_iiwa_ws/install/lbr_fri_idl/local/lib/python3.10/dist-packages",
+        "/opt/ros/humble/lib/python3.10/site-packages",
+        "/opt/ros/humble/local/lib/python3.10/dist-packages"
+    ]
+}
