@@ -33,6 +33,8 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/CcDeltaConfiguration.msg"
   "msg/PccDeltaConfiguration.msg"
   "msg/PlanarCsConfiguration.msg"
+  "srv/MotionCaptureDataS.srv"
+  "srv/GetMotionCaptureData.srv"
   DEPENDENCIES builtin_interfaces geometry_msgs std_msgs
  )
 
