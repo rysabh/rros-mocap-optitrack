@@ -138,7 +138,7 @@ sMarker LabeledMarker)
     // Create the marker message
     // mocap_optitrack_interfaces::msg::MarkerSet marker_msg;
     marker_msg.header.stamp = cameraMidExposureTime;
-    marker_msg.id = LabeledMarker.ID;
+    marker_msg.id = markerID;
     marker_msg.size = LabeledMarker.size;
     marker_msg.position.x = LabeledMarker.x;
     marker_msg.position.y = LabeledMarker.y;
