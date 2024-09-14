@@ -117,10 +117,10 @@ int MoCapNatNetClient::connect()
     }
 
     // start recording if requested
-    this->recordingStarted_ = false;
-    if (moCapPublisher->isRecordingRequested()) {
-        this->recordingStarted_ = this->startRecording();
-    }
+    // this->recordingStarted_ = false;
+    // if (moCapPublisher->isRecordingRequested()) {
+    //     this->recordingStarted_ = this->startRecording();
+    // }
 
     //
     // Get all the objects from the server
@@ -134,12 +134,12 @@ int MoCapNatNetClient::connect()
 void MoCapNatNetClient::disconnect()
 {
     // stop the recording if necessary
-    if (this->recordingStarted_) {
-        bool recordingStopped = this->stopRecording();
-        if (recordingStopped) {
-            this->recordingStarted_ = false;
-        }
-    }
+    // if (this->recordingStarted_) {
+    //     bool recordingStopped = this->stopRecording();
+    //     if (recordingStopped) {
+    //         this->recordingStarted_ = false;
+    //     }
+    // }
 
     // Disconnect the client
     this->Disconnect();
@@ -225,6 +225,7 @@ void NATNET_CALLCONV dataFrameHandler(sFrameOfMocapData* data, void* pUserData)
         RCLCPP_DEBUG(pClient->getPublisher()->get_logger(), "Transit latency : %.2lf milliseconds\n", transitLatencyMillisec );
     }
     //
+
     // FrameOfMocapData params
     bool bIsRecording = ((data->params & 0x01)!=0);
     bool bTrackedModelsChanged = ((data->params & 0x02)!=0);
@@ -248,8 +249,19 @@ void NATNET_CALLCONV dataFrameHandler(sFrameOfMocapData* data, void* pUserData)
 
     //
 	// Rigid Bodies
-    pClient->sendRigidBodyMessage(cameraMidExposureSecsSinceEpoch, data->RigidBodies, data->nRigidBodies);
+    // pClient->sendRigidBodyMessage(cameraMidExposureSecsSinceEpoch, data->RigidBodies, data->nRigidBodies);
     //
+	// labeled markers - this includes all markers (Active, Passive, and 'unlabeled' (markers with no asset but a PointCloud ID)
+    //
+    //
+    // pClient->sendMarkerSetMessage(cameraMidExposureSecsSinceEpoch, data->LabeledMarkers, data->nLabeledMarkers);
+    //
+    //
+    // send the combined message
+    pClient->sendCombinedMessage(cameraMidExposureSecsSinceEpoch, data->LabeledMarkers, data->nLabeledMarkers, data->RigidBodies, data->nRigidBodies);
+    //
+    //
+    
     //NOTE : from below is just logging...
 	// Skeletons
 	RCLCPP_DEBUG(pClient->getPublisher()->get_logger(), "Skeletons [Count=%d]\n", data->nSkeletons);
@@ -265,45 +277,6 @@ void NATNET_CALLCONV dataFrameHandler(sFrameOfMocapData* data, void* pUserData)
 		}
 	}
     //
-	// labeled markers - this includes all markers (Active, Passive, and 'unlabeled' (markers with no asset but a PointCloud ID)
-    //
-    //
-	RCLCPP_DEBUG(pClient->getPublisher()->get_logger(), "Markers [Count=%d]\n", data->nLabeledMarkers);
-	for(i=0; i < data->nLabeledMarkers; i++)
-	{
-        //Commented below some additional boolean variables about the markers
-        //bool bOccluded = ((data->LabeledMarkers[i].params & 0x01)!=0);// marker was not visible (occluded) in this frame
-        //bool bPCSolved = ((data->LabeledMarkers[i].params & 0x02)!=0);// reported position provided by point cloud solve
-        //bool bModelSolved = ((data->LabeledMarkers[i].params & 0x04) != 0);// reported position provided by model solve
-        //bool bHasModel = ((data->LabeledMarkers[i].params & 0x08) != 0);// marker has an associated asset in the data stream
-        bool bUnlabeled = ((data->LabeledMarkers[i].params & 0x10) != 0);// marker is 'unlabeled', but has a point cloud ID that matches Motive PointCloud ID (In Motive 3D View)
-		bool bActiveMarker = ((data->LabeledMarkers[i].params & 0x20) != 0);// marker is an actively labeled LED marker
-        //
-        sMarker marker = data->LabeledMarkers[i];
-        //
-        // Marker ID Scheme:
-        // Active Markers:
-        //   ID = ActiveID, correlates to RB ActiveLabels list
-        // Passive Markers: 
-        //   If Asset with Legacy Labels
-        //      AssetID 	(Hi Word)
-        //      MemberID	(Lo Word)
-        //   Else
-        //      PointCloud ID
-        int modelID, markerID;
-        NatNet_DecodeID( marker.ID, &modelID, &markerID );
-		//
-        char szMarkerType[512];
-        if (bActiveMarker)
-            strcpy(szMarkerType, "Active");
-        else if(bUnlabeled)
-            strcpy(szMarkerType, "Unlabeled");
-        else
-            strcpy(szMarkerType, "Labeled");
-        //
-        RCLCPP_DEBUG(pClient->getPublisher()->get_logger(), "%s Marker [ModelID=%d, MarkerID=%d] [size=%3.2f] [pos=%3.2f,%3.2f,%3.2f]\n",
-            szMarkerType, modelID, markerID, marker.size, marker.x, marker.y, marker.z);
-	}
     //
     // force plates
     RCLCPP_DEBUG(pClient->getPublisher()->get_logger(), "Force Plate [Count=%d]\n", data->nForcePlates);
@@ -350,10 +323,22 @@ void NATNET_CALLCONV dataFrameHandler(sFrameOfMocapData* data, void* pUserData)
     }
 }
 
-// Method responsible of forwarding messages of rigid body data to the ROS2 publisher
-void MoCapNatNetClient::sendRigidBodyMessage(double cameraMidExposureSecsSinceEpoch, sRigidBodyData* bodies, int nRigidBodies)
+// // Method responsible of forwarding messages of rigid body data to the ROS2 publisher
+// void MoCapNatNetClient::sendRigidBodyMessage(double cameraMidExposureSecsSinceEpoch, sRigidBodyData* bodies, int nRigidBodies)
+// {
+//     this->moCapPublisher->sendRigidBodyMessage(cameraMidExposureSecsSinceEpoch, bodies, nRigidBodies);
+// }
+
+// // Method responsible of forwarding messages of rigid body data to the ROS2 publisher
+// void MoCapNatNetClient::sendMarkerSetMessage(double cameraMidExposureSecsSinceEpoch, sMarker* LabeledMarkers, int nLabeledMarkers)
+// {
+//     this->moCapPublisher->sendMarkerSetMessage(cameraMidExposureSecsSinceEpoch, LabeledMarkers, nLabeledMarkers);
+// }
+
+// // Method responsible of forwarding messages of rigid body data to the ROS2 publisher
+void MoCapNatNetClient::sendCombinedMessage(double cameraMidExposureSecsSinceEpoch, sMarker* markers_ptr, int nMarkers, sRigidBodyData* bodies_ptr, int nRigidBodies)
 {
-    this->moCapPublisher->sendRigidBodyMessage(cameraMidExposureSecsSinceEpoch, bodies, nRigidBodies);
+    this->moCapPublisher->sendCombinedMessage(cameraMidExposureSecsSinceEpoch, markers_ptr, nMarkers, bodies_ptr, nRigidBodies);
 }
 
 
@@ -506,33 +491,33 @@ void MoCapNatNetClient::processCamera(sCameraDescription* pCamera)
     RCLCPP_INFO(this->moCapPublisher->get_logger(), "Camera Orientation (%3.2f, %3.2f, %3.2f, %3.2f)\n", pCamera->qx, pCamera->qy, pCamera->qz, pCamera->qw);
 }
 
-bool MoCapNatNetClient::startRecording()
-{
-    ErrorCode ret = ErrorCode_OK;
-    void* pResult;
-    int nBytes = 0;
-    ret = this->SendMessageAndWait("StartRecording", &pResult, &nBytes);
+// bool MoCapNatNetClient::startRecording()
+// {
+//     ErrorCode ret = ErrorCode_OK;
+//     void* pResult;
+//     int nBytes = 0;
+//     ret = this->SendMessageAndWait("StartRecording", &pResult, &nBytes);
 
-    if (ret != ErrorCode_OK) {
-        RCLCPP_ERROR(this->moCapPublisher->get_logger(), "Recording could not be started as the request returned error code %d", ret);
-    }
+//     if (ret != ErrorCode_OK) {
+//         RCLCPP_ERROR(this->moCapPublisher->get_logger(), "Recording could not be started as the request returned error code %d", ret);
+//     }
 
-    return ret == ErrorCode_OK;
-}
+//     return ret == ErrorCode_OK;
+// }
 
-bool MoCapNatNetClient::stopRecording()
-{
-    ErrorCode ret = ErrorCode_OK;
-    void* pResult;
-    int nBytes = 0;
-    ret = this->SendMessageAndWait("StopRecording", &pResult, &nBytes);
+// bool MoCapNatNetClient::stopRecording()
+// {
+//     ErrorCode ret = ErrorCode_OK;
+//     void* pResult;
+//     int nBytes = 0;
+//     ret = this->SendMessageAndWait("StopRecording", &pResult, &nBytes);
 
-    if (ret != ErrorCode_OK) {
-        RCLCPP_ERROR(this->moCapPublisher->get_logger(), "Recording could not be stopped as the request returned error code %d", ret);
-    }
+//     if (ret != ErrorCode_OK) {
+//         RCLCPP_ERROR(this->moCapPublisher->get_logger(), "Recording could not be stopped as the request returned error code %d", ret);
+//     }
 
-    return ret == ErrorCode_OK;
-}
+//     return ret == ErrorCode_OK;
+// }
 
 bool MoCapNatNetClient::setTakeName(std::string takeName)
 {

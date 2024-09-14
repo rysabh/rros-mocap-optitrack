@@ -14,6 +14,8 @@ def generate_launch_description():
         'config',
         'natnetclient.yaml'
     )
+    
+    
     natnet_client = Node(
         package='mocap_optitrack_client',
         executable='mocap_optitrack_client',
@@ -27,6 +29,7 @@ def generate_launch_description():
         'config',
         'world_to_base_y_up.yaml'
     )
+    
     world_to_base = Node(
         package='mocap_optitrack_w2b',
         executable='mocap_optitrack_w2b',
@@ -49,6 +52,6 @@ def generate_launch_description():
     )
     # Add the nodes to the launch description and return it
     ld.add_action(natnet_client)
-    ld.add_action(world_to_base)
-    ld.add_action(inverse_kinematics)
+    # ld.add_action(world_to_base)
+    # ld.add_action(inverse_kinematics)
     return ld

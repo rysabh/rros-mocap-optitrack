@@ -25,11 +25,16 @@ find_package(geometry_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/MotionCaptureData.msg"
   "msg/RigidBody.msg"
   "msg/RigidBodyArray.msg"
+  "msg/MarkerSetArray.msg"
+  "msg/MarkerSet.msg"
   "msg/CcDeltaConfiguration.msg"
   "msg/PccDeltaConfiguration.msg"
   "msg/PlanarCsConfiguration.msg"
+  # "srv/MotionCaptureDataS.srv"
+  "srv/GetMotionCaptureData.srv"
   DEPENDENCIES builtin_interfaces geometry_msgs std_msgs
  )
 
