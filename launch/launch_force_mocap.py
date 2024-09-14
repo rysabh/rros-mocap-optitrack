@@ -79,8 +79,8 @@ def generate_launch_description():
 
     ati_sensor_node = Node(
             package='data_collection',
-            executable='ati_wrench_writer',
-            name='ati_wrench_writer',
+            executable='ati_wrench_publisher',
+            name='ati_wrench_publisher',
             output='screen',
             parameters=sensor_parameters
         )
