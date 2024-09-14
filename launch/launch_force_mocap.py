@@ -79,7 +79,7 @@ def generate_launch_description():
 
     ati_sensor_node = Node(
             package='data_collection',
-            executable='ati_wrench_writer',
+            executable='ati_wrench_publisher',
             name='ati_wrench_writer',
             output='screen',
             parameters=sensor_parameters
@@ -87,8 +87,8 @@ def generate_launch_description():
 
 
     # Add the nodes to the launch description and return it
-    ld.add_action(natnet_client)
+    # ld.add_action(natnet_client)
     # ld.add_action(world_to_base)
     # ld.add_action(inverse_kinematics)
-    # ld.add_action(ati_sensor_node)
+    ld.add_action(ati_sensor_node)
     return ld

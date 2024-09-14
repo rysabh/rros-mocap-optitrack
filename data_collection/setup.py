@@ -41,6 +41,7 @@ setup(
             'impedence_recorder = data_collection.impedence_recorder:main',
             'repeatability_test = data_collection.repeatability_test:main',
             'ati_wrench_writer = data_collection.ati_wrench_writer:main',
+            'ati_wrench_publisher = data_collection.ati_wrench_publisher:main',
         ],
     },
 )
