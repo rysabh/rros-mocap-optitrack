@@ -34,5 +34,6 @@
         "/home/battery/multi_iiwa_ws/install/lbr_fri_idl/local/lib/python3.10/dist-packages",
         "/opt/ros/humble/lib/python3.10/site-packages",
         "/opt/ros/humble/local/lib/python3.10/dist-packages"
-    ]
+    ],
+    "ros.distro": "humble"
 }
