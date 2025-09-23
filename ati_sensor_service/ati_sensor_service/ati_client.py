@@ -13,7 +13,21 @@ class AtiClient(Node):
     def get_force_torque(self):
         request = GetForceTorque.Request()
         future = self.client_.call_async(request)
+
         return future
+        # Call the service synchronously and wait for the response
+        # response = self.client_.call(request)
+        
+        # return response
+                # Attempt to call the service
+        # try:
+        #     print("Calling service")
+        #     response = self.client_.call(request)
+        #     self.get_logger().info(f"Received response: {response}")
+        #     return response
+        # except Exception as e:
+        #     self.get_logger().error(f"Failed to call service: {str(e)}")
+        #     return None
     
 def main(args=None):
     rclpy.init(args=args)

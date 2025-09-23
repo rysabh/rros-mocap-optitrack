@@ -21,11 +21,12 @@ class NetFTSensorPublisher(Node):
         self.sensor.start_streaming()
         time.sleep(1 / sample_rate)
 
-        self.csv_file = open(output_file, mode='w', newline='')
-        self.csv_writer = csv.writer(self.csv_file)
-        self.csv_writer.writerow(['Time Elapsed (s)', 'Fx (N)', 'Fy (N)', 'Fz (N)', 'Tx (Nm)', 'Ty (Nm)', 'Tz (Nm)'])
+        # self.csv_file = open(output_file, mode='w', newline='')
+        # self.csv_writer = csv.writer(self.csv_file)
+        # self.csv_writer.writerow(['Time Elapsed (s)', 'Fx (N)', 'Fy (N)', 'Fz (N)', 'Tx (Nm)', 'Ty (Nm)', 'Tz (Nm)'])
 
         start_packet = self.sensor.get_most_recent_data()
+
         
         # Check if start_packet is valid and has the necessary method
         if isinstance(start_packet, str) or not hasattr(start_packet, 'get_ft_timestamp'):
@@ -43,8 +44,8 @@ class NetFTSensorPublisher(Node):
         if packet and isinstance(packet, object) and hasattr(packet, 'get_ft_timestamp'):
             time_elapsed = packet.get_ft_timestamp() - self.start_time
             ft_data = packet.get_force_torque_array()
-            self.csv_writer.writerow([time_elapsed, *ft_data])
-            self.get_logger().info(f"\nTime: {round(time_elapsed, 2)}s, Data: {[round(i, 2) for i in ft_data]}")
+            # self.csv_writer.writerow([time_elapsed, *ft_data])
+            # self.get_logger().info(f"\nTime: {round(time_elapsed, 2)}s, Data: {[round(i, 2) for i in ft_data]}")
 
             msg = ForceTorque()
             msg.time_elapsed = time_elapsed
@@ -60,7 +61,7 @@ class NetFTSensorPublisher(Node):
 
     def destroy_node(self):
         self.sensor.stop_streaming()
-        self.csv_file.close()
+        # self.csv_file.close()
         super().destroy_node()
 
 def main(args=None):
@@ -74,3 +75,7 @@ def main(args=None):
     finally:
         node.destroy_node()
         rclpy.shutdown()
+
+
+# if __name__ == '__main__':
+#     main()
