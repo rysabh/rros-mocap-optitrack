@@ -103,24 +103,23 @@ int MoCapNatNetClient::connect()
     ret = this->SendMessageAndWait("AnalogSamplesPerMocapFrame", &pResult, &nBytes);
     if (ret == ErrorCode_OK)
     {
-        int g_analogSamplesPerMocapFrame = *((int*)pResult);
-        RCLCPP_INFO(this->moCapPublisher->get_logger(), "Analog Samples Per Mocap Frame : %d\n", g_analogSamplesPerMocapFrame);
+        this->g_analogSamplesPerMocapFrame = *((int*)pResult);
+        RCLCPP_INFO(this->moCapPublisher->get_logger(), "Analog Samples Per Mocap Frame : %d\n", this->g_analogSamplesPerMocapFrame);
     }
     else
     {
-        RCLCPP_ERROR(this->moCapPublisher->get_logger(), "Error getting Analog frame rate.\n");
-    }
-
-    std::string takeName = moCapPublisher->getTakeName();
-    if (!takeName.empty()) {
-        this->setTakeName(takeName);
+        RCLCPP_WARN(this->moCapPublisher->get_logger(), "AnalogSamplesPerMocapFrame not available (error code %d); continuing.\n", ret);
     }
 
     // start recording if requested
-    // this->recordingStarted_ = false;
-    // if (moCapPublisher->isRecordingRequested()) {
-    //     this->recordingStarted_ = this->startRecording();
-    // }
+    this->recordingStarted_ = false;
+    if (moCapPublisher->isRecordingRequested()) {
+        std::string takeName = moCapPublisher->getTakeName();
+        if (!takeName.empty()) {
+            (void)this->setTakeName(takeName);
+        }
+        this->recordingStarted_ = this->startRecording();
+    }
 
     //
     // Get all the objects from the server
@@ -134,12 +133,12 @@ int MoCapNatNetClient::connect()
 void MoCapNatNetClient::disconnect()
 {
     // stop the recording if necessary
-    // if (this->recordingStarted_) {
-    //     bool recordingStopped = this->stopRecording();
-    //     if (recordingStopped) {
-    //         this->recordingStarted_ = false;
-    //     }
-    // }
+    if (this->recordingStarted_) {
+        bool recordingStopped = this->stopRecording();
+        if (recordingStopped) {
+            this->recordingStarted_ = false;
+        }
+    }
 
     // Disconnect the client
     this->Disconnect();
@@ -492,32 +491,38 @@ void MoCapNatNetClient::processCamera(sCameraDescription* pCamera)
 }
 
 // bool MoCapNatNetClient::startRecording()
-// {
-//     ErrorCode ret = ErrorCode_OK;
-//     void* pResult;
-//     int nBytes = 0;
-//     ret = this->SendMessageAndWait("StartRecording", &pResult, &nBytes);
+bool MoCapNatNetClient::startRecording()
+{
+    ErrorCode ret = ErrorCode_OK;
+    void* pResult;
+    int nBytes = 0;
+    ret = this->SendMessageAndWait("StartRecording", &pResult, &nBytes);
 
-//     if (ret != ErrorCode_OK) {
-//         RCLCPP_ERROR(this->moCapPublisher->get_logger(), "Recording could not be started as the request returned error code %d", ret);
-//     }
+    if (ret != ErrorCode_OK) {
+        RCLCPP_WARN(this->moCapPublisher->get_logger(), "StartRecording failed (error code %d). Is Motive remote control enabled?", ret);
+    } else {
+        RCLCPP_INFO(this->moCapPublisher->get_logger(), "Started recording in Motive.\n");
+    }
 
-//     return ret == ErrorCode_OK;
-// }
+    return ret == ErrorCode_OK;
+}
 
 // bool MoCapNatNetClient::stopRecording()
-// {
-//     ErrorCode ret = ErrorCode_OK;
-//     void* pResult;
-//     int nBytes = 0;
-//     ret = this->SendMessageAndWait("StopRecording", &pResult, &nBytes);
+bool MoCapNatNetClient::stopRecording()
+{
+    ErrorCode ret = ErrorCode_OK;
+    void* pResult;
+    int nBytes = 0;
+    ret = this->SendMessageAndWait("StopRecording", &pResult, &nBytes);
 
-//     if (ret != ErrorCode_OK) {
-//         RCLCPP_ERROR(this->moCapPublisher->get_logger(), "Recording could not be stopped as the request returned error code %d", ret);
-//     }
+    if (ret != ErrorCode_OK) {
+        RCLCPP_WARN(this->moCapPublisher->get_logger(), "StopRecording failed (error code %d).", ret);
+    } else {
+        RCLCPP_INFO(this->moCapPublisher->get_logger(), "Stopped recording in Motive.\n");
+    }
 
-//     return ret == ErrorCode_OK;
-// }
+    return ret == ErrorCode_OK;
+}
 
 bool MoCapNatNetClient::setTakeName(std::string takeName)
 {

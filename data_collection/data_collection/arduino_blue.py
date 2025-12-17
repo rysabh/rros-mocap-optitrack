@@ -8,7 +8,7 @@ import cv2
 import threading
 
 # Set up the serial connection with Arduino
-arduino = serial.Serial(port='/dev/ttyACM2', baudrate=9600, timeout=1)
+arduino = serial.Serial(port='/dev/ttyACM0', baudrate=9600, timeout=1)
 
 def send_command(command):  
     print(f"Signal received, sending {command} to microcontroller")
@@ -107,6 +107,7 @@ def handle_user_input():
             send_command('X')
 
         elif command == 'Y':
+            visual_timer(2)
             send_command('Y')
 
         elif command == 'Z':

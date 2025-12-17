@@ -64,8 +64,8 @@ public:
     bool setTakeName(std::string takeName);
 
     // methods to manage the recording
-    // bool startRecording();
-    // bool stopRecording();
+    bool startRecording();
+    bool stopRecording();
 
     //Methods to forward messages to the ROS2 system
     void sendCombinedMessage(double cameraMidExposureSecsSinceEpoch, sMarker* markers_ptr, int nMarkers, sRigidBodyData* bodies_ptr, int nRigidBodies);
