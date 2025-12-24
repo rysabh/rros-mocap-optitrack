@@ -1,6 +1,7 @@
 #ifndef MOCAPPUBLISHER_H
 #define MOCAPPUBLISHER_H
 
+#include <mutex>
 #include <vector>
 #include <NatNetTypes.h>
 
@@ -8,6 +9,7 @@
 #include "mocap_optitrack_interfaces/msg/rigid_body_array.hpp"
 #include "mocap_optitrack_interfaces/msg/marker_set_array.hpp"
 #include "mocap_optitrack_interfaces/msg/motion_capture_data.hpp"
+#include "mocap_optitrack_interfaces/srv/get_motion_capture_data.hpp"
 
 
 using namespace std;
@@ -18,6 +20,11 @@ class MoCapPublisher: public rclcpp::Node
 private:
     //Attributes
     rclcpp::Publisher<mocap_optitrack_interfaces::msg::MotionCaptureData>::SharedPtr publisher_motion;
+    rclcpp::Service<mocap_optitrack_interfaces::srv::GetMotionCaptureData>::SharedPtr get_mocap_data_service_;
+
+    std::mutex last_motion_msg_mutex_;
+    mocap_optitrack_interfaces::msg::MotionCaptureData last_motion_msg_;
+    bool has_last_motion_msg_ = false;
 
     // rclcpp::Publisher<mocap_optitrack_interfaces::msg::RigidBodyArray>::SharedPtr publisher_;
     // rclcpp::Publisher<mocap_optitrack_interfaces::msg::MarkerSetArray>::SharedPtr publisher_set;

@@ -12,6 +12,17 @@
   <depend>python3-opencv</depend>
   <depend>cv_bridge</depend>
   <depend>sensor_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>control_msgs</depend>
+  <depend>mocap_optitrack_interfaces</depend>
+  <depend>std_srvs</depend>
+  <depend>rosidl_runtime_py</depend>
+  <depend>python3-yaml</depend>
+  <exec_depend>python3-serial</exec_depend>
+  <exec_depend>python3-matplotlib</exec_depend>
+  <exec_depend>ffmpeg</exec_depend>
+  <depend>ati_sensor_interfaces</depend>
+  <depend>ati_sensor_service</depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

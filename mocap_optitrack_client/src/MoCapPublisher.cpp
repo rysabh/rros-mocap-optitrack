@@ -44,6 +44,19 @@ MoCapPublisher::MoCapPublisher(): Node("natnet_client")
   // this->get_parameter("sub_topic", topic_m);
   this->publisher_motion = this->create_publisher<mocap_optitrack_interfaces::msg::MotionCaptureData>(topic_r.c_str(), 10);
 
+  this->get_mocap_data_service_ =
+      this->create_service<mocap_optitrack_interfaces::srv::GetMotionCaptureData>(
+          "get_mocap_data",
+          [this](
+              const std::shared_ptr<rmw_request_id_t> /*request_header*/,
+              const std::shared_ptr<mocap_optitrack_interfaces::srv::GetMotionCaptureData::Request> /*request*/,
+              std::shared_ptr<mocap_optitrack_interfaces::srv::GetMotionCaptureData::Response> response) {
+            std::lock_guard<std::mutex> lock(this->last_motion_msg_mutex_);
+            if (this->has_last_motion_msg_) {
+              response->latest_message = this->last_motion_msg_;
+            }
+          });
+
   // this->publisher_ = this->create_publisher<mocap_optitrack_interfaces::msg::RigidBodyArray>(topic_r.c_str(), 10);
   // this->publisher_set = this->create_publisher<mocap_optitrack_interfaces::msg::MarkerSetArray>(topic_m.c_str(), 10);
 
@@ -109,6 +122,12 @@ void MoCapPublisher::sendCombinedMessage(
 
     // Publish the combined message
     publisher_motion->publish(combined_msg);
+
+    {
+      std::lock_guard<std::mutex> lock(this->last_motion_msg_mutex_);
+      this->last_motion_msg_ = combined_msg;
+      this->has_last_motion_msg_ = true;
+    }
 }
 
 
